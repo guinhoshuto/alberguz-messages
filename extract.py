@@ -23,7 +23,7 @@ class MyClient(discord.Client):
         print(f'logged on as {self.user}')
         for channel in alberguz.channels:
             print(channel.name, channel.id, channel.type)
-            if channel.type.name in ['voice', 'text'] and channel.id not in [896104609188298762, 862556909160759307]:
+            if channel.type.name in ['voice', 'text'] and channel.id not in [862556909160759307]:
                 try:
                     async for msg in self.get_channel(channel.id).history(limit=limit):
                         try:

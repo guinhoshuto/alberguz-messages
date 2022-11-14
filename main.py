@@ -19,4 +19,5 @@ author = messages.groupby('author')['author'].count()
 author.to_csv('./output/author.csv')
 
 
-# print(messages.groupby('channel')['time', 'author', 'content'].last())
+#por tempo mes
+print(messages.groupby('channel')['time', 'author', 'content'].last())
