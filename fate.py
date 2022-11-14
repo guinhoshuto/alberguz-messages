@@ -1,5 +1,9 @@
 import pandas as pd
 
-cassino = pd.read_csv('./output/cassino_.csv')
+messages = pd.read_csv('./output/messages.csv')
 
-print(cassino.head())
+cassino = messages[messages['channel'] == '╰─⦁🎰-cassino'] 
+mudae = cassino[cassino['author'] == 'Mudae']
+
+
+# print(mudae)
