@@ -5,7 +5,7 @@ import discord
 
 load_dotenv()
 
-message_columns= ['id', 'time', 'channel', 'author_id', 'author', 'content', 'embeds'] 
+message_columns= ['id', 'time', 'channel', 'author_id', 'author', 'content', 'title', 'embeds'] 
 limit = 1000000
 
 def is_command(msg):
@@ -27,7 +27,10 @@ class MyClient(discord.Client):
                 try:
                     async for msg in self.get_channel(channel.id).history(limit=limit):
                         try:
+                            title = ''
                             embed = msg.embeds[0].to_dict()
+                            if hasattr(msg.embeds[0], 'title'):
+                                title = msg.embeds[0].title
                         except:
                             embed = ''
                         
@@ -39,6 +42,7 @@ class MyClient(discord.Client):
                                                 msg.author.id,
                                                 msg.author.name,
                                                 msg.content,
+                                                title,
                                                 embed
                                                 ]], columns=message_columns)])
                         if len(data) == limit:
@@ -46,7 +50,7 @@ class MyClient(discord.Client):
                 except:
                     print('deu ruim')
                     break;
-        data.to_csv('./output/messages.csv')
+        data.to_csv('./output/teste.csv')
         print('terminou')
 intents = discord.Intents.default()
 intents.message_content = True
