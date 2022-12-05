@@ -9,7 +9,7 @@ load_dotenv()
 
 message_columns = ['id', 'time', 'channel', 'author_id', 'author', 'content', 'reactions', 'title', 'embeds', 'interaction', 'sticker'] 
 emoji_columns = ['id', 'name', 'code', 'url']
-mes = Utils.months(7)
+mes = Utils.months(11)
 
 class MyClient(discord.Client):
     async def on_ready(self):

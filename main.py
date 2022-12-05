@@ -1,10 +1,30 @@
 import pandas as pd
 import numpy as np
 from collections import Counter
+from os import listdir
+from os.path import isfile, join
+
+message_columns = ['id', 'time', 'channel', 'author_id', 'author', 'content', 'reactions', 'title', 'embeds', 'interaction', 'sticker'] 
+#juntar todos os meses em 1 dataframe
+def merge_months():
+    messages_files = [f for f in listdir('./output') if isfile(join('./output/', f)) and f[0:4] == '2022']
+    recalp_messages = pd.DataFrame(columns=message_columns)
+    for file in messages_files:
+        tmp = pd.read_csv('./output/' + file)
+        recalp_messages = pd.concat([recalp_messages, tmp])
+    print(recalp_messages.info())
+    print(len(messages_files))
+    recalp_messages.drop('Unnamed: 0', inplace=True, axis=1)
+    recalp_messages.to_csv('./output/messages.csv')
+    return messages_files
 
 messages = pd.read_csv('./output/messages.csv')
+messages['date'] = [msg.split(' ')[0] for msg in messages['time']]
 
-def author_top_keywords(author):
+# messages = messages[messages['time'] > '2022-01-01']
+# print(messages['time'].tail())
+
+def author_top_keywords(messages, author):
     author_id = messages[messages['author'] == author]['author_id'].unique()[0]
     top_kw = Counter(" ".join(messages[messages['author'] == author]["content"].astype(str).str.lower()).split()).most_common(100)
     kw = [k[0] for k in top_kw]
@@ -14,36 +34,40 @@ def author_top_keywords(author):
     df = pd.DataFrame({'author_id': author_id, 'author': [author]*len(top_kw), 'kw': kw, 'times': kw_times})
     return df
 
-messages = messages[messages['time'] > '2022-01-01']
-messages['date'] = [msg.split(' ')[0] for msg in messages['time']]
-# print(messages['time'].tail())
 
 # mensagens por canal
-channel = messages.groupby('channel')['channel'].count()
-print(channel)
-channel.to_csv('./output/channels.csv')
+def channels_csv(messages):
+    channel = messages.groupby('channel')['channel'].count()
+    channel.to_csv('./output/channels.csv')
 
 # usuarios por canal
-channel_author = messages.groupby(['channel', 'author']).size()
-print(channel_author)
-channel_author.to_csv('./output/channel_author.csv')
+def channels_author_csv(messages):
+    channel_author = messages.groupby(['channel', 'author']).size()
+    channel_author.to_csv('./output/channel_author.csv')
 
 # usuarios por canal
-channel_author_date = messages.groupby(['channel', 'author_id', 'author', 'date']).size()
-print(channel_author_date)
-channel_author_date.to_csv('./output/channel_author_date.csv')
+def channels_author_date_csv(messages):
+    channel_author_date = messages.groupby(['channel', 'author_id', 'author', 'date']).size()
+    channel_author_date.to_csv('./output/channel_author_date.csv')
 
 # mensagens por usuário
-author = messages.groupby('author')['author'].count()
-author.to_csv('./output/author.csv')
+def author_csv(messages):
+    author = messages.groupby('author')['author'].count()
+    author.to_csv('./output/author.csv')
 
-print(messages.dtypes)
+def author_top_kw(messages):
+    author_df = pd.DataFrame(columns=['author_id', 'author', 'kw', 'times'])
+    for author in messages['author'].unique():
+        author_df = pd.concat([author_df, author_top_keywords(messages, author)])
+    author_df.to_csv('./output/author_top_kw.csv')
 
-author_df = pd.DataFrame(columns=['author_id', 'author', 'kw', 'times'])
-for author in messages['author'].unique():
-    author_df = pd.concat([author_df, author_top_keywords(author)])
-    
-author_df.to_csv('./output/author_top_kw.csv')
+merge_months()
+# channels_csv(messages)
+# channels_author_csv(messages)
+# channels_author_date_csv(messages)
+# author_csv(messages)
+# author_top_kw(messages)
+# print(messages['Unnamed: 0'].unique())
 
 # print(Counter(" ".join(messages[messages['author'] != 'Mudae']["content"].astype(str)).split()).most_common(100))
 

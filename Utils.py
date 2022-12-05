@@ -75,5 +75,9 @@ def is_command(msg):
     else: 
         return False
 
+def emoji_code(name, id):
+    return '<:' + name + ':' + str(id) + '>',
+
+
 def months(m): 
     return [month for month in months_data if month['month'] == m][0]
