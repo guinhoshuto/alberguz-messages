@@ -3,6 +3,7 @@ import numpy as np
 from collections import Counter
 from os import listdir
 from os.path import isfile, join
+from Utils import ignore
 
 message_columns = ['id', 'time', 'channel', 'author_id', 'author', 'content', 'reactions', 'title', 'embeds', 'interaction', 'sticker'] 
 #juntar todos os meses em 1 dataframe
@@ -24,9 +25,14 @@ messages['date'] = [msg.split(' ')[0] for msg in messages['time']]
 # messages = messages[messages['time'] > '2022-01-01']
 # print(messages['time'].tail())
 
-def author_top_keywords(messages, author):
+def author_top_keywords(messages, author, ignore):
     author_id = messages[messages['author'] == author]['author_id'].unique()[0]
-    top_kw = Counter(" ".join(messages[messages['author'] == author]["content"].astype(str).str.lower()).split()).most_common(100)
+    top_kw = Counter(" ".join(messages[messages['author'] == author]["content"].astype(str).str.lower()).split()).most_common(1000)
+    # for word in top_kw:
+    #     if word[0] in ignore:
+    #         print(word)
+    #         del word
+
     kw = [k[0] for k in top_kw]
     kw_times = [k[1] for k in top_kw]
     # for kw in top_kw:
@@ -55,18 +61,27 @@ def author_csv(messages):
     author = messages.groupby('author')['author'].count()
     author.to_csv('./output/author.csv')
 
-def author_top_kw(messages):
+def author_top_kw(messages, ignore):
     author_df = pd.DataFrame(columns=['author_id', 'author', 'kw', 'times'])
     for author in messages['author'].unique():
-        author_df = pd.concat([author_df, author_top_keywords(messages, author)])
+        author_df = pd.concat([author_df, author_top_keywords(messages, author, ignore)])
+
+    # for word in list(top_kw):
+    #     if word in ignore:
+    #         del top_kw[word]
+    # for word in author_df:
+    #     if word['kw'] in ignore:
+    #         del word
+
+    author_df = author_df[~author_df['kw'].isin(ignore)]
     author_df.to_csv('./output/author_top_kw.csv')
 
-merge_months()
+# merge_months()
 # channels_csv(messages)
 # channels_author_csv(messages)
 # channels_author_date_csv(messages)
 # author_csv(messages)
-# author_top_kw(messages)
+author_top_kw(messages, ignore)
 # print(messages['Unnamed: 0'].unique())
 
 # print(Counter(" ".join(messages[messages['author'] != 'Mudae']["content"].astype(str)).split()).most_common(100))

@@ -81,3 +81,9 @@ def emoji_code(name, id):
 
 def months(m): 
     return [month for month in months_data if month['month'] == m][0]
+
+ignore = ['$m', 'o', '$p', 'de', 'que', 'eu', 'a', 'é', 'e', 'pra', '$tu', 'do', 'no', 
+        'mas', 'q', 'um', 'nan', 'da', 'tem', 'não', 'com', '$im', 'mais', 'se', 'na', 
+        'só', 'em', 'nao', 'n', 'isso', 'uma', 'meu', 'to', '$w', 'os', 'ele', 'tá', 
+        '$h', 'ta', 'me', 'vai', 'esse', 'ai', 'y', 'mto', 'por', '$d', 'acho', 'foi', 
+        'pq', 'as', 'vou', '$arl', '1', 'nem', 'era', 'aqui', 'agora', 'tava', 'essa']
