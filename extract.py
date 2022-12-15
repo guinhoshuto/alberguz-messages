@@ -77,7 +77,7 @@ async def get_month_messages(client, server, month):
                 print('deu ruim')
                 print(e)
                 break;
-        print(datetime.datetime.now(), channel.name, len(data.index))
+        print(datetime.datetime.now(), channel.name, channel.id, len(data.index))
     data.to_csv('./output/2022-'+ month['name'] + '.csv')
     print('terminou')
 
@@ -86,9 +86,9 @@ class MyClient(discord.Client):
         print(f'logged on as {self.user}')
         alberguz = self.get_guild(855694948707991593)
         print(mes['name'], mes['limit'])
-        get_users(alberguz)
+        # get_users(alberguz)
         # get_emojis(alberguz)
-        # await get_month_messages(self, alberguz, mes)
+        await get_month_messages(self, alberguz, mes)
 
 intents = discord.Intents.all()
 intents.message_content = True

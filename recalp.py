@@ -8,6 +8,8 @@ load_dotenv()
 
 # engine = db.create_engine(os.environ.get("DATABASE_URL"))
 # connection = engine.connect()
+bots = ['228537642583588864', '235148962103951360', '432610292342587392']
+excluded_channels = ['974912917067694080','1004804075948363786', '896104609188298762', '1000228782399049738']
 
 # recalp_db = db.Table('recalp')
 # print(recalp_db.columns.keys())
@@ -20,6 +22,7 @@ def month_columns(date):
 members = pd.read_csv('./output/members.csv')
 messages = pd.read_csv('./output/channel_author_date.csv')
 messages['month'] = messages['date'].apply(lambda d: month_columns(d))
+messages = messages[messages['author_id'].isin(bots) == False]
 messages.to_csv('./output/recalp_month.csv')
 print(messages.head())
 
@@ -42,7 +45,7 @@ def get_messages_by_month(user):
         qtd = user_messages[user_messages['month'] == m['name']]['0'].sum()
         # if m['name'] == 'jan':
         #     print(user_messages[user_messages['month'] == m['name']]['author'].iloc(0), m['name'], qtd)
-        months[m['name']] = qtd
+        months[m['full_name']] = qtd
     return months
 
 def get_messages_by_channel(user):
